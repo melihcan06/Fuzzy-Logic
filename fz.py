@@ -2,12 +2,12 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 class Kural:
-    def __init__(self,norm,kosullar,bulanik_kural):
+    def __init__(self,norm,kosullar,cikarim_sistemi):
         self.norm=norm
         self.kosullar=kosullar#'ozellik_ad':'','uf_ad':'' #uf=uyelik fonksiyonu
-        self.bulanik_kural=bulanik_kural#Bulaniklastirma
+        self.cikarim_sistemi=cikarim_sistemi
 
-class Bulaniklastirma:
+class CikarimSistemi:
     def __init__(self,tur="Tsk"):
         self.tur=tur#ad olarak kaliyor
 
@@ -102,9 +102,10 @@ class Model:
 
         w = []
         kural_sonuclari=[]
-        for i in range(len(self.kurallar)):#kurallar uygulaniyor 
+        for i in range(len(self.kurallar)):#kurallar uygulaniyor
             ciktilar=[]
             for j in range(len(ozellikler)):
+                #bulaniklastirma
                 oz=ozellikler[j]
                 uyelik_fonk_adi=self.kurallar[i].kosullar[oz]#'ozellik'
                 ozellik=self.ozellikler[ozellik_indexleri[oz]]
@@ -112,15 +113,15 @@ class Model:
                 x=uf.fonksiyon(degerler[j])#model ozelligi icin normal uf unu islet
                 ciktilar.append(x)
 
-            #bulaniklastirma
+            #cikarim sistemi
             if self.kurallar[i].norm=="ve":#w seçiliyor
                 ek=np.min(np.array(ciktilar))
                 w.append(ek)
-                bulanik_cikis=self.kurallar[i].bulanik_kural.fonksiyon([girdi,ek])
+                bulanik_cikis=self.kurallar[i].cikarim_sistemi.fonksiyon([girdi,ek])
             else:#"veya"
                 eb=np.max(np.array(ciktilar))
                 w.append(eb)
-                bulanik_cikis =self.kurallar[i].bulanik_kural.fonksiyon([girdi,eb])
+                bulanik_cikis =self.kurallar[i].cikarim_sistemi.fonksiyon([girdi,eb])
 
             kural_sonuclari.append(bulanik_cikis)
             print(str(self.kurallar[i].kosullar), " uygulandi")
@@ -173,36 +174,36 @@ y_kucuk_uf.fonksiyon=y_kucuk
 y.uyelik_fonksiyonu_ekle(y_kucuk_uf)
 m.ozellik_ekle(y)
 
-tsk_kural1=Bulaniklastirma("Tsk")
-def bulanik_tsk_kural1(girdi):
+tsk_cs1=CikarimSistemi("Tsk")
+def bulanik_tsk_cs1(girdi):
     girdi,w=girdi
     x,y=girdi['x'],girdi['y']
     return -x+y+1
-tsk_kural1.fonksiyon=bulanik_tsk_kural1
+tsk_cs1.fonksiyon=bulanik_tsk_cs1
 
-tsk_kural2=Bulaniklastirma("Tsk")
-def bulanik_tsk_kural2(girdi):
+tsk_cs2=CikarimSistemi("Tsk")
+def bulanik_tsk_cs2(girdi):
     girdi, w = girdi
     x, y = girdi['x'], girdi['y']
     return -y+3
-tsk_kural2.fonksiyon=bulanik_tsk_kural2
+tsk_cs2.fonksiyon=bulanik_tsk_cs2
 
-tsk_kural3=Bulaniklastirma("Tsk")
-def bulanik_tsk_kural3(girdi):
+tsk_cs3=CikarimSistemi("Tsk")
+def bulanik_tsk_cs3(girdi):
     girdi, w = girdi
     x, y = girdi['x'], girdi['y']
     return -x+3
-tsk_kural3.fonksiyon=bulanik_tsk_kural3
+tsk_cs3.fonksiyon=bulanik_tsk_cs3
 
-tsk_kural4=Bulaniklastirma("Tsk")
-def bulanik_tsk_kural4(girdi):
+tsk_cs4=CikarimSistemi("Tsk")
+def bulanik_tsk_cs4(girdi):
     girdi, w = girdi
     x, y = girdi['x'], girdi['y']
     return x+y+2
-tsk_kural4.fonksiyon=bulanik_tsk_kural4
+tsk_cs4.fonksiyon=bulanik_tsk_cs4
 
-m.kural_ekle(Kural('ve',{'x':'kucuk','y':'kucuk'},tsk_kural1))
-m.kural_ekle(Kural('ve',{'x':'kucuk','y':'buyuk'},tsk_kural2))
-m.kural_ekle(Kural('ve',{'x':'buyuk','y':'kucuk'},tsk_kural3))
-m.kural_ekle(Kural('ve',{'x':'buyuk','y':'buyuk'},tsk_kural4))
+m.kural_ekle(Kural('ve',{'x':'kucuk','y':'kucuk'},tsk_cs1))
+m.kural_ekle(Kural('ve',{'x':'kucuk','y':'buyuk'},tsk_cs2))
+m.kural_ekle(Kural('ve',{'x':'buyuk','y':'kucuk'},tsk_cs3))
+m.kural_ekle(Kural('ve',{'x':'buyuk','y':'buyuk'},tsk_cs4))
 print(m.kurallari_islet({'x':-3,'y':1}))
